@@ -10,6 +10,13 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
-    return Scaffold(appBar: AppBar(title: Text('Notes')));
+    return Scaffold(
+      appBar: AppBar(title: Text('Notes Sql'), centerTitle: true),
+      body: Column(),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {},
+        child: Icon(Icons.add_circle),
+      ),
+    );
   }
 }
