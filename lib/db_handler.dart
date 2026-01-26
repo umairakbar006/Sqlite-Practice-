@@ -32,4 +32,12 @@ class DbHelper {
     await dbClient!.insert('notes', notesModel.toMap());
     return notesModel;
   }
+
+  Future<List<NotesModel>> getNotesList() async {
+    var dbClient = await db;
+    final List<Map<String, Object?>> queryResult = await dbClient!.query(
+      'notes',
+    );
+    return queryResult.map((e) => NotesModel.fromMap(e)).toList();
+  }
 }
