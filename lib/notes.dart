@@ -4,6 +4,7 @@ class NotesModel {
   final int? age;
   final String? description;
   final String? email;
+
   NotesModel({
     required this.id,
     required this.age,
@@ -12,12 +13,16 @@ class NotesModel {
     required this.email,
   });
 
+  // This method is used to read data from database
+
   NotesModel.fromMap(Map<String, dynamic> res)
     : id = res['id'],
       title = res['title'],
       age = res['age'],
       description = res['description'],
       email = res['email'];
+
+  //This is method to save data into database
 
   Map<String, Object?> toMap() {
     return {
