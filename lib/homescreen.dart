@@ -54,15 +54,23 @@ class _HomeScreenState extends State<HomeScreen> {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          dbHelper!.insert(
-            NotesModel(
-              id: 1,
-              age: 23,
-              title: 'First notes',
-              description: 'This is my first notes',
-              email: 'umairakbar5665',
-            ),
-          );
+          dbHelper!
+              .insert(
+                NotesModel(
+                  id: 1,
+                  age: 23,
+                  title: 'First notes',
+                  description: 'This is my first notes',
+                  email: 'umairakbar5665',
+                ),
+              )
+              .then((value) {
+                print('Notes added');
+                setState(() {});
+              })
+              .onError((error, StackTrace) {
+                print(error.toString());
+              });
         },
         child: Icon(Icons.add_circle),
       ),
