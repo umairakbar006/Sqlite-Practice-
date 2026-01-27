@@ -47,6 +47,14 @@ class _HomeScreenState extends State<HomeScreen> {
                           child: Icon(Icons.delete_sharp),
                           color: Colors.red,
                         ),
+                        direction: DismissDirection.endToStart,
+                        onDismissed: (direction) {
+                          setState(() {
+                            dbHelper!.delete(snapshot.data![index].id!);
+                            notesList = dbHelper!.getNotesList();
+                            snapshot.data!.remove(snapshot.data![index].id);
+                          });
+                        },
                         child: Card(
                           child: ListTile(
                             title: Text(snapshot.data![index].title.toString()),
@@ -73,7 +81,6 @@ class _HomeScreenState extends State<HomeScreen> {
           dbHelper!
               .insert(
                 NotesModel(
-                  id: 1,
                   age: 23,
                   title: 'First notes',
                   description: 'This is my first notes',
@@ -82,7 +89,9 @@ class _HomeScreenState extends State<HomeScreen> {
               )
               .then((value) {
                 print('Notes added');
-                setState(() {});
+                setState(() {
+                  notesList = dbHelper!.getNotesList();
+                });
               })
               .onError((error, StackTrace) {
                 print(error.toString());

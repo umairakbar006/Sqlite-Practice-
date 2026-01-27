@@ -6,7 +6,7 @@ class NotesModel {
   final String? email;
 
   NotesModel({
-    required this.id,
+    this.id,
     required this.age,
     required this.title,
     required this.description,
