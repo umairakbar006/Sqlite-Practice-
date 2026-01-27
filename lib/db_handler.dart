@@ -6,6 +6,7 @@ import 'dart:io' as io;
 
 class DbHelper {
   static Database? _db;
+  //This functions checks if db is already opened or not
   Future<Database?> get db async {
     if (_db != null) {
       return _db;
