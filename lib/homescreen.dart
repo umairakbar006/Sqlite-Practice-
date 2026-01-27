@@ -32,22 +32,38 @@ class _HomeScreenState extends State<HomeScreen> {
           FutureBuilder(
             future: notesList,
             builder: (context, AsyncSnapshot<List<NotesModel>> snapshot) {
-              return Expanded(
-                child: ListView.builder(
-                  itemCount: snapshot.data!.length,
-                  itemBuilder: (context, index) {
-                    return Card(
-                      child: ListTile(
-                        title: Text(snapshot.data![index].title.toString()),
-                        subtitle: Text(
-                          snapshot.data![index].description.toString(),
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return Center(child: CircularProgressIndicator());
+              } else if (snapshot.hasError) {
+                return Text('Error: ${snapshot.error}');
+              } else if (snapshot.hasData) {
+                return Expanded(
+                  child: ListView.builder(
+                    itemCount: snapshot.data!.length,
+                    itemBuilder: (context, index) {
+                      return Dismissible(
+                        key: Key(snapshot.data![index].id.toString()),
+                        background: Container(
+                          child: Icon(Icons.delete_sharp),
+                          color: Colors.red,
                         ),
-                        trailing: Text(snapshot.data![index].age.toString()),
-                      ),
-                    );
-                  },
-                ),
-              );
+                        child: Card(
+                          child: ListTile(
+                            title: Text(snapshot.data![index].title.toString()),
+                            subtitle: Text(
+                              snapshot.data![index].description.toString(),
+                            ),
+                            trailing: Text(
+                              snapshot.data![index].age.toString(),
+                            ),
+                          ),
+                        ),
+                      );
+                    },
+                  ),
+                );
+              }
+              return Text('No data found !!!');
             },
           ),
         ],
