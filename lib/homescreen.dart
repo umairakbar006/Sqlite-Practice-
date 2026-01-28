@@ -130,7 +130,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       decoration: InputDecoration(hintText: 'Add decription'),
                     ),
                     TextField(
-                      controller: titleController,
+                      controller: emailController,
                       decoration: InputDecoration(hintText: 'Email?'),
                     ),
                   ],
