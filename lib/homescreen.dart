@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:notes_app/db_handler.dart';
 import 'package:notes_app/notes.dart';
 
@@ -26,7 +27,7 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('Notes Sql'), centerTitle: true),
+      appBar: AppBar(title: Text('Notes'), centerTitle: true),
       body: Column(
         children: [
           FutureBuilder(
@@ -41,28 +42,45 @@ class _HomeScreenState extends State<HomeScreen> {
                   child: ListView.builder(
                     itemCount: snapshot.data!.length,
                     itemBuilder: (context, index) {
-                      return Dismissible(
-                        key: Key(snapshot.data![index].id.toString()),
-                        background: Container(
-                          child: Icon(Icons.delete_sharp),
-                          color: Colors.red,
-                        ),
-                        direction: DismissDirection.endToStart,
-                        onDismissed: (direction) {
+                      return InkWell(
+                        onTap: () {
+                          dbHelper!.update(
+                            NotesModel(
+                              age: 22,
+                              title: 'Second Note',
+                              description: 'This is second updated note',
+                              email: 'hamid.cv@gmail.com',
+                            ),
+                          );
                           setState(() {
-                            dbHelper!.delete(snapshot.data![index].id!);
                             notesList = dbHelper!.getNotesList();
-                            snapshot.data!.remove(snapshot.data![index].id);
                           });
                         },
-                        child: Card(
-                          child: ListTile(
-                            title: Text(snapshot.data![index].title.toString()),
-                            subtitle: Text(
-                              snapshot.data![index].description.toString(),
-                            ),
-                            trailing: Text(
-                              snapshot.data![index].age.toString(),
+                        child: Dismissible(
+                          key: Key(snapshot.data![index].id.toString()),
+                          background: Container(
+                            child: Icon(Icons.delete_sharp),
+                            color: Colors.red,
+                          ),
+                          direction: DismissDirection.endToStart,
+                          onDismissed: (direction) {
+                            setState(() {
+                              dbHelper!.delete(snapshot.data![index].id!);
+                              notesList = dbHelper!.getNotesList();
+                              snapshot.data!.remove(snapshot.data![index].id);
+                            });
+                          },
+                          child: Card(
+                            child: ListTile(
+                              title: Text(
+                                snapshot.data![index].title.toString(),
+                              ),
+                              subtitle: Text(
+                                snapshot.data![index].description.toString(),
+                              ),
+                              trailing: Text(
+                                snapshot.data![index].age.toString(),
+                              ),
                             ),
                           ),
                         ),
