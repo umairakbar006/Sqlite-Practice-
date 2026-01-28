@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:notes_app/db_handler.dart';
 import 'package:notes_app/notes.dart';
+import 'package:notes_app/detailscreen.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -9,8 +10,24 @@ class HomeScreen extends StatefulWidget {
   @override
   State<HomeScreen> createState() => _HomeScreenState();
 }
+//Added controllers to get input from user
+
+final TextEditingController titleController = TextEditingController();
+final TextEditingController descController = TextEditingController();
+final TextEditingController ageController = TextEditingController();
+final TextEditingController emailController = TextEditingController();
 
 class _HomeScreenState extends State<HomeScreen> {
+  @override
+  void dispose() {
+    titleController.dispose();
+    descController.dispose();
+    ageController.dispose();
+    emailController.dispose();
+
+    super.dispose();
+  }
+
   DbHelper? dbHelper;
   late Future<List<NotesModel>> notesList;
   @override
@@ -44,17 +61,13 @@ class _HomeScreenState extends State<HomeScreen> {
                     itemBuilder: (context, index) {
                       return InkWell(
                         onTap: () {
-                          dbHelper!.update(
-                            NotesModel(
-                              age: 22,
-                              title: 'Second Note',
-                              description: 'This is second updated note',
-                              email: 'hamid.cv@gmail.com',
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) =>
+                                  NoteDetailScreen(note: snapshot.data![index]),
                             ),
                           );
-                          setState(() {
-                            notesList = dbHelper!.getNotesList();
-                          });
                         },
                         child: Dismissible(
                           key: Key(snapshot.data![index].id.toString()),
@@ -96,6 +109,71 @@ class _HomeScreenState extends State<HomeScreen> {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
+          showDialog(
+            context: context,
+            builder: (context) {
+              return AlertDialog(
+                title: Text('Add note'),
+                content: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    TextField(
+                      controller: titleController,
+                      decoration: InputDecoration(hintText: 'Enter title'),
+                    ),
+                    TextField(
+                      controller: ageController,
+                      decoration: InputDecoration(hintText: 'Enter Age'),
+                    ),
+                    TextField(
+                      controller: descController,
+                      decoration: InputDecoration(hintText: 'Add decription'),
+                    ),
+                    TextField(
+                      controller: titleController,
+                      decoration: InputDecoration(hintText: 'Email?'),
+                    ),
+                  ],
+                ),
+                actions: [
+                  TextButton(
+                    onPressed: () {
+                      dbHelper!
+                          .insert(
+                            NotesModel(
+                              age: int.parse(ageController.text),
+                              title: titleController.text,
+                              description: descController.text,
+                              email: emailController.text,
+                            ),
+                          )
+                          .then((value) {
+                            titleController.clear();
+                            ageController.clear();
+                            descController.clear();
+                            emailController.clear();
+                            setState(() {
+                              notesList = dbHelper!.getNotesList();
+                            });
+                            Navigator.pop(context);
+                          });
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text(
+                            'Notes added Successfully!!!',
+                            style: TextStyle(color: Colors.black),
+                          ),
+                          backgroundColor: Colors.red[100],
+                          duration: Duration(seconds: 2),
+                        ),
+                      );
+                    },
+                    child: Text("Add"),
+                  ),
+                ],
+              );
+            },
+          );
           dbHelper!
               .insert(
                 NotesModel(
