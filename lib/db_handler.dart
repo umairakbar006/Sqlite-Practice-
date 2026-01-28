@@ -46,4 +46,14 @@ class DbHelper {
     var dbClient = await db;
     return await dbClient!.delete('notes', where: 'id = ?', whereArgs: [id]);
   }
+
+  Future<int> update(NotesModel notesModel) async {
+    var dbClient = await db;
+    return await dbClient!.update(
+      'notes',
+      notesModel.toMap(),
+      where: 'id = ?',
+      whereArgs: [notesModel.id],
+    );
+  }
 }
