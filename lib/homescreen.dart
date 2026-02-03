@@ -69,6 +69,50 @@ class _HomeScreenState extends State<HomeScreen> {
                             ),
                           );
                         },
+                        onLongPress: () {
+                          titleController.text = snapshot.data![index].title!;
+                          descController.text =
+                              snapshot.data![index].description!;
+                          ageController.text = snapshot.data![index].age
+                              .toString();
+                          emailController.text = snapshot.data![index].email!;
+                          showDialog(
+                            context: context,
+                            builder: (context) => AlertDialog(
+                              title: Text('Update Note'),
+                              content: Column(
+                                children: [
+                                  TextField(controller: titleController),
+                                  TextField(
+                                    controller: ageController,
+                                    keyboardType:
+                                        TextInputType.numberWithOptions(),
+                                  ),
+                                  TextField(controller: descController),
+                                  TextField(controller: emailController),
+                                ],
+                              ),
+                              actions: [
+                                TextButton(
+                                  onPressed: () {
+                                    dbHelper!.update(
+                                      NotesModel(
+                                        id: snapshot.data![index].id,
+                                        age: int.parse(
+                                          ageController.text.toString(),
+                                        ),
+                                        title: titleController.text,
+                                        description: descController.text,
+                                        email: emailController.text,
+                                      ),
+                                    );
+                                  },
+                                  child: const Text('Update'),
+                                ),
+                              ],
+                            ),
+                          );
+                        },
                         child: Dismissible(
                           key: Key(snapshot.data![index].id.toString()),
                           background: Container(
@@ -174,24 +218,6 @@ class _HomeScreenState extends State<HomeScreen> {
               );
             },
           );
-          dbHelper!
-              .insert(
-                NotesModel(
-                  age: 23,
-                  title: 'First notes',
-                  description: 'This is my first notes',
-                  email: 'umairakbar5665',
-                ),
-              )
-              .then((value) {
-                print('Notes added');
-                setState(() {
-                  notesList = dbHelper!.getNotesList();
-                });
-              })
-              .onError((error, StackTrace) {
-                print(error.toString());
-              });
         },
         child: Icon(Icons.add_circle),
       ),
