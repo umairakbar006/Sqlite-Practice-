@@ -28,12 +28,12 @@ class _HomeScreenState extends State<HomeScreen> {
     super.dispose();
   }
 
-  DbHelper? dbHelper;
+  dBHelper? dbHelper;
   late Future<List<NotesModel>> notesList;
   @override
   void initState() {
     super.initState();
-    dbHelper = DbHelper();
+    dbHelper = dBHelper();
     loadData();
   }
 
@@ -73,9 +73,6 @@ class _HomeScreenState extends State<HomeScreen> {
                           titleController.text = snapshot.data![index].title!;
                           descController.text =
                               snapshot.data![index].description!;
-                          ageController.text = snapshot.data![index].age
-                              .toString();
-                          emailController.text = snapshot.data![index].email!;
                           showDialog(
                             context: context,
                             builder: (context) => AlertDialog(
@@ -98,12 +95,9 @@ class _HomeScreenState extends State<HomeScreen> {
                                     dbHelper!.update(
                                       NotesModel(
                                         id: snapshot.data![index].id,
-                                        age: int.parse(
-                                          ageController.text.toString(),
-                                        ),
+
                                         title: titleController.text,
                                         description: descController.text,
-                                        email: emailController.text,
                                       ),
                                     );
                                   },
@@ -135,9 +129,6 @@ class _HomeScreenState extends State<HomeScreen> {
                               subtitle: Text(
                                 snapshot.data![index].description.toString(),
                               ),
-                              trailing: Text(
-                                snapshot.data![index].age.toString(),
-                              ),
                             ),
                           ),
                         ),
@@ -165,17 +156,10 @@ class _HomeScreenState extends State<HomeScreen> {
                       controller: titleController,
                       decoration: InputDecoration(hintText: 'Enter title'),
                     ),
-                    TextField(
-                      controller: ageController,
-                      decoration: InputDecoration(hintText: 'Enter Age'),
-                    ),
+
                     TextField(
                       controller: descController,
                       decoration: InputDecoration(hintText: 'Add decription'),
-                    ),
-                    TextField(
-                      controller: emailController,
-                      decoration: InputDecoration(hintText: 'Email?'),
                     ),
                   ],
                 ),
@@ -185,17 +169,15 @@ class _HomeScreenState extends State<HomeScreen> {
                       dbHelper!
                           .insert(
                             NotesModel(
-                              age: int.parse(ageController.text),
                               title: titleController.text,
                               description: descController.text,
-                              email: emailController.text,
                             ),
                           )
                           .then((value) {
                             titleController.clear();
-                            ageController.clear();
+
                             descController.clear();
-                            emailController.clear();
+
                             setState(() {
                               notesList = dbHelper!.getNotesList();
                             });

@@ -5,13 +5,11 @@ class NotesModel {
 
   NotesModel({this.id, required this.title, required this.description});
 
-
-   //This is method to save data into database
+  //This is method to save data into database
 
   Map<String, Object?> toMap() {
     return {'id': id, 'title': title, 'description': description};
   }
-}
 
   // This method is used to read data from database
 
@@ -19,5 +17,4 @@ class NotesModel {
     : id = res['id'],
       title = res['title'],
       description = res['description'];
-
- 
+}

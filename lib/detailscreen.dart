@@ -18,20 +18,9 @@ class NoteDetailScreen extends StatelessWidget {
         child: Column(
           children: [
             Text(
-              'Age: ${note!.age}',
-              style: TextStyle(color: Colors.grey, fontWeight: FontWeight.bold),
-            ),
-            SizedBox(height: 10),
-            Text(
-              'Email: ${note!.email}',
-              style: TextStyle(color: Colors.grey, fontWeight: FontWeight.bold),
-            ),
-            Divider(height: 30),
-            Text(
               'Description: ${note!.description}',
               style: TextStyle(color: Colors.grey, fontWeight: FontWeight.w600),
             ),
-            SizedBox(height: 10),
           ],
         ),
       ),
