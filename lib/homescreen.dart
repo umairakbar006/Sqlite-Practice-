@@ -10,20 +10,16 @@ class HomeScreen extends StatefulWidget {
   @override
   State<HomeScreen> createState() => _HomeScreenState();
 }
-//Added controllers to get input from user
-
-final TextEditingController titleController = TextEditingController();
-final TextEditingController descController = TextEditingController();
-final TextEditingController ageController = TextEditingController();
-final TextEditingController emailController = TextEditingController();
 
 class _HomeScreenState extends State<HomeScreen> {
+  //Added controllers to get input from user
+
+  final TextEditingController titleController = TextEditingController();
+  final TextEditingController descController = TextEditingController();
   @override
   void dispose() {
     titleController.dispose();
     descController.dispose();
-    ageController.dispose();
-    emailController.dispose();
 
     super.dispose();
   }
@@ -34,11 +30,12 @@ class _HomeScreenState extends State<HomeScreen> {
   void initState() {
     super.initState();
     dbHelper = dBHelper();
+    notesList = dbHelper!.getNotesList();
     loadData();
   }
 
-  loadData() async {
-    notesList = dbHelper!.getNotesList();
+  loadData() {
+    notesList = dbHelper?.getNotesList() ?? Future.value([]);
   }
 
   @override
@@ -80,26 +77,28 @@ class _HomeScreenState extends State<HomeScreen> {
                               content: Column(
                                 children: [
                                   TextField(controller: titleController),
-                                  TextField(
-                                    controller: ageController,
-                                    keyboardType:
-                                        TextInputType.numberWithOptions(),
-                                  ),
                                   TextField(controller: descController),
-                                  TextField(controller: emailController),
                                 ],
                               ),
                               actions: [
                                 TextButton(
                                   onPressed: () {
-                                    dbHelper!.update(
-                                      NotesModel(
-                                        id: snapshot.data![index].id,
+                                    dbHelper!
+                                        .update(
+                                          NotesModel(
+                                            id: snapshot.data![index].id,
 
-                                        title: titleController.text,
-                                        description: descController.text,
-                                      ),
-                                    );
+                                            title: titleController.text,
+                                            description: descController.text,
+                                          ),
+                                        )
+                                        .then((Value) {
+                                          setState(() {
+                                            notesList = dbHelper!
+                                                .getNotesList();
+                                          });
+                                          Navigator.pop(context);
+                                        });
                                   },
                                   child: const Text('Update'),
                                 ),
@@ -118,7 +117,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             setState(() {
                               dbHelper!.delete(snapshot.data![index].id!);
                               notesList = dbHelper!.getNotesList();
-                              snapshot.data!.remove(snapshot.data![index].id);
+                              snapshot.data!.removeAt(index);
                             });
                           },
                           child: Card(
@@ -165,34 +164,21 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
                 actions: [
                   TextButton(
-                    onPressed: () {
-                      dbHelper!
-                          .insert(
-                            NotesModel(
-                              title: titleController.text,
-                              description: descController.text,
-                            ),
-                          )
-                          .then((value) {
-                            titleController.clear();
-
-                            descController.clear();
-
-                            setState(() {
-                              notesList = dbHelper!.getNotesList();
-                            });
-                            Navigator.pop(context);
-                          });
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(
-                          content: Text(
-                            'Notes added Successfully!!!',
-                            style: TextStyle(color: Colors.black),
-                          ),
-                          backgroundColor: Colors.red[100],
-                          duration: Duration(seconds: 2),
+                    onPressed: () async {
+                      await dbHelper!.insert(
+                        NotesModel(
+                          title: titleController.text,
+                          description: descController.text,
                         ),
                       );
+                      titleController.clear();
+                      descController.clear();
+
+                      Navigator.pop(context);
+
+                      setState(() {
+                        notesList = dbHelper!.getNotesList();
+                      });
                     },
                     child: Text("Add"),
                   ),

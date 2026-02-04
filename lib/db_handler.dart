@@ -28,21 +28,21 @@ class dBHelper {
 
   Future _oncreate(Database db, int version) async {
     await db.execute(
-      'CREATE TABLE notes (id PRIMARY KEY AUTOINCREMENT, title TEXT NOT NULL description TEXT NOT NULL )',
+      'CREATE TABLE notes (id INTEGER PRIMARY KEY AUTOINCREMENT, title TEXT NOT NULL, description TEXT NOT NULL )',
     );
   }
 
   // This function inserts values to database
 
   Future<NotesModel> insert(NotesModel notesModel) async {
-    var dbclient = await _db;
+    var dbclient = await db;
     await dbclient!.insert('notes', notesModel.toMap());
     return notesModel;
   }
 
   // This function is used to show notesList on UI
   Future<List<NotesModel>> getNotesList() async {
-    var dbclient = await _db;
+    var dbclient = await db;
     final List<Map<String, dynamic>> queryResult = await dbclient!.query(
       'notes',
     );
@@ -51,12 +51,12 @@ class dBHelper {
 
   //Delete function
   Future<int> delete(int id) async {
-    var dbclient = await _db;
+    var dbclient = await db;
     return dbclient!.delete('notes', where: 'id=?', whereArgs: [id]);
   }
 
   Future<int> update(NotesModel notesModel) async {
-    var dbclient = await _db;
+    var dbclient = await db;
     return dbclient!.update(
       'notes',
       notesModel.toMap(),
