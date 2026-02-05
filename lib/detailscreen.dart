@@ -18,34 +18,23 @@ class NoteDetailScreen extends StatelessWidget {
           },
         ),
         centerTitle: true,
-        title: Padding(
-          padding: const EdgeInsets.all(30.0),
-          child: Text(
-            '${note!.title}',
-            style: GoogleFonts.poppins(
-              color: Colors.white,
-              fontWeight: FontWeight.bold,
-            ),
+        title: Text(
+          '${note!.title}',
+          style: GoogleFonts.poppins(
+            color: Colors.white,
+            fontWeight: FontWeight.bold,
           ),
         ),
         backgroundColor: Colors.blue,
       ),
-      body: Padding(
-        padding: const EdgeInsetsGeometry.fromLTRB(0, 10, 0, 0),
-        child: Column(
-          children: [
-            Container(
-              child: Center(
-                child: Text(
-                  '${note!.description}',
-                  style: GoogleFonts.montserrat(
-                    color: Colors.black,
-                    fontWeight: FontWeight.w500,
-                  ),
-                ),
-              ),
-            ),
-          ],
+      body: SingleChildScrollView(
+        padding: const EdgeInsetsGeometry.all(20),
+        child: Text(
+          '${note!.description}',
+          style: GoogleFonts.montserrat(
+            color: Colors.black,
+            fontWeight: FontWeight.w600,
+          ),
         ),
       ),
     );
