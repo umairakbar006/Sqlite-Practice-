@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 import 'notes.dart';
 
@@ -10,16 +11,36 @@ class NoteDetailScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(note!.title!, style: TextStyle(color: Colors.white)),
-        backgroundColor: Colors.black45,
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back_ios, color: Colors.white),
+          onPressed: () {
+            Navigator.pop(context);
+          },
+        ),
+        centerTitle: true,
+        title: Text(
+          '${note!.title}',
+          style: GoogleFonts.poppins(
+            color: Colors.white,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        backgroundColor: Colors.blue,
       ),
       body: Padding(
         padding: const EdgeInsetsGeometry.fromLTRB(0, 10, 0, 0),
         child: Column(
           children: [
-            Text(
-              'Description: ${note!.description}',
-              style: TextStyle(color: Colors.grey, fontWeight: FontWeight.w600),
+            Container(
+              child: Center(
+                child: Text(
+                  '${note!.description}',
+                  style: GoogleFonts.montserrat(
+                    color: Colors.black,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+              ),
             ),
           ],
         ),
