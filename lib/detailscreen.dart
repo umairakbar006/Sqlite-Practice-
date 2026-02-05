@@ -18,11 +18,14 @@ class NoteDetailScreen extends StatelessWidget {
           },
         ),
         centerTitle: true,
-        title: Text(
-          '${note!.title}',
-          style: GoogleFonts.poppins(
-            color: Colors.white,
-            fontWeight: FontWeight.bold,
+        title: Padding(
+          padding: const EdgeInsets.all(30.0),
+          child: Text(
+            '${note!.title}',
+            style: GoogleFonts.poppins(
+              color: Colors.white,
+              fontWeight: FontWeight.bold,
+            ),
           ),
         ),
         backgroundColor: Colors.blue,
