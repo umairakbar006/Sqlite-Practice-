@@ -115,6 +115,16 @@ class _HomeScreenState extends State<HomeScreen> {
 
                           child: InkWell(
                             onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => NoteDetailScreen(
+                                    note: snapshot.data![index],
+                                  ),
+                                ),
+                              );
+                            },
+                            onLongPress: () {
                               final currentNote = snapshot.data![index];
                               titleController.text = currentNote.title
                                   .toString();
@@ -146,17 +156,6 @@ class _HomeScreenState extends State<HomeScreen> {
                                     actions: [
                                       TextButton(
                                         onPressed: () {
-                                          Navigator.push(
-                                            context,
-                                            MaterialPageRoute(
-                                              builder: (context) =>
-                                                  NoteDetailScreen(
-                                                    note: snapshot.data![index],
-                                                  ),
-                                            ),
-                                          );
-                                        },
-                                        onLongPress: () {
                                           dbHelper!.update(
                                             NotesModel(
                                               id: snapshot.data![index].id,
