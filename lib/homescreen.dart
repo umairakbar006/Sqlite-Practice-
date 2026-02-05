@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
@@ -80,16 +81,20 @@ class _HomeScreenState extends State<HomeScreen> {
               } else if (snapshot.hasData) {
                 return Expanded(
                   child: GridView.builder(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 10,
+                      vertical: 10,
+                    ),
                     gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                       crossAxisCount: 2,
-                      crossAxisSpacing: 2,
-                      mainAxisSpacing: 8,
-                      childAspectRatio: 0.8,
+                      crossAxisSpacing: 10,
+                      mainAxisSpacing: 10,
+                      childAspectRatio: 1,
                     ),
                     itemCount: snapshot.data!.length,
                     itemBuilder: (context, index) {
                       return Padding(
-                        padding: const EdgeInsets.fromLTRB(8, 15, 8, 0),
+                        padding: const EdgeInsets.all(8.0),
                         child: Dismissible(
                           direction: DismissDirection.horizontal,
                           background: Container(
@@ -104,33 +109,116 @@ class _HomeScreenState extends State<HomeScreen> {
                               dbHelper!.getNotesList();
                             });
                             ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(content: Text('Note Deled')),
+                              SnackBar(content: Text('Note Deleted')),
                             );
                           },
 
-                          child: Card(
-                            elevation: 3,
-                            child: Column(
-                              children: [
-                                Text(
-                                  snapshot.data![index].title.toString(),
-                                  style: GoogleFonts.montserrat(
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 16,
-                                  ),
-                                ),
-                                SizedBox(height: 5),
-                                Text(
-                                  snapshot.data![index].description.toString(),
-                                  style: GoogleFonts.openSans(
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 13,
-                                  ),
+                          child: InkWell(
+                            onTap: () {
+                              final currentNote = snapshot.data![index];
+                              titleController.text = currentNote.title
+                                  .toString();
+                              descController.text = currentNote.description
+                                  .toString();
+                              showDialog(
+                                context: context,
+                                builder: (context) {
+                                  return AlertDialog(
+                                    title: Text('Update'),
+                                    content: Column(
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        TextField(
+                                          controller: titleController,
+                                          decoration: InputDecoration(
+                                            label: Text('Edit your Title'),
+                                          ),
+                                        ),
+                                        SizedBox(height: 0.3),
+                                        TextField(
+                                          controller: descController,
+                                          decoration: InputDecoration(
+                                            label: Text('Enter Description'),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                    actions: [
+                                      TextButton(
+                                        onPressed: () {
+                                          Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                              builder: (context) =>
+                                                  NoteDetailScreen(
+                                                    note: snapshot.data![index],
+                                                  ),
+                                            ),
+                                          );
+                                        },
+                                        onLongPress: () {
+                                          dbHelper!.update(
+                                            NotesModel(
+                                              id: snapshot.data![index].id,
+                                              title: titleController.text,
+                                              description: descController.text,
+                                            ),
+                                          );
+                                          titleController.clear();
+                                          descController.clear();
+                                          Navigator.pop(context);
+                                          setState(() {
+                                            notesList = dbHelper!
+                                                .getNotesList();
+                                          });
+                                        },
+                                        child: Text('Update'),
+                                      ),
+                                      TextButton(
+                                        onPressed: () {
+                                          titleController.clear();
+                                          descController.clear();
+                                          Navigator.pop(context);
+                                        },
+                                        child: Text('Cancel'),
+                                      ),
+                                    ],
+                                  );
+                                },
+                              );
+                            },
+                            child: Card(
+                              margin: EdgeInsets.zero,
+                              elevation: 3,
+                              child: Padding(
+                                padding: const EdgeInsets.all(12.0),
+                                child: Column(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    Text(
+                                      snapshot.data![index].title.toString(),
+                                      style: GoogleFonts.montserrat(
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 16,
+                                      ),
+                                    ),
+                                    Divider(thickness: 0.5),
+                                    Expanded(
+                                      child: Text(
+                                        snapshot.data![index].description
+                                            .toString(),
+                                        style: GoogleFonts.openSans(
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 13,
+                                        ),
 
-                                  maxLines: 3,
-                                  overflow: TextOverflow.ellipsis,
+                                        maxLines: 3,
+                                        overflow: TextOverflow.ellipsis,
+                                      ),
+                                    ),
+                                  ],
                                 ),
-                              ],
+                              ),
                             ),
                           ),
                         ),
