@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:notes_app/db_handler.dart';
 import 'package:notes_app/notes.dart';
 import 'package:notes_app/detailscreen.dart';
@@ -41,7 +42,31 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('Notes'), centerTitle: true),
+      appBar: AppBar(
+        title: RichText(
+          text: TextSpan(
+            children: [
+              TextSpan(
+                text: 'MY',
+                style: GoogleFonts.poppins(
+                  color: Colors.black,
+                  fontWeight: FontWeight.normal,
+                  fontSize: 25,
+                ),
+              ),
+              TextSpan(
+                text: ' NOTES',
+                style: GoogleFonts.poppins(
+                  color: Colors.blueAccent,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 25,
+                ),
+              ),
+            ],
+          ),
+        ),
+        centerTitle: true,
+      ),
       body: Column(
         children: [
           FutureBuilder(
@@ -53,82 +78,40 @@ class _HomeScreenState extends State<HomeScreen> {
                 return Text('Error: ${snapshot.error}');
               } else if (snapshot.hasData) {
                 return Expanded(
-                  child: ListView.builder(
+                  child: GridView.builder(
+                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                      crossAxisCount: 2,
+                      crossAxisSpacing: 2,
+                      mainAxisSpacing: 8,
+                      childAspectRatio: 0.8,
+                    ),
                     itemCount: snapshot.data!.length,
                     itemBuilder: (context, index) {
-                      return InkWell(
-                        onTap: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) =>
-                                  NoteDetailScreen(note: snapshot.data![index]),
-                            ),
-                          );
-                        },
-                        onLongPress: () {
-                          titleController.text = snapshot.data![index].title!;
-                          descController.text =
-                              snapshot.data![index].description!;
-                          showDialog(
-                            context: context,
-                            builder: (context) => AlertDialog(
-                              title: Text('Update Note'),
-                              content: Column(
-                                children: [
-                                  TextField(controller: titleController),
-                                  TextField(controller: descController),
-                                ],
-                              ),
-                              actions: [
-                                TextButton(
-                                  onPressed: () {
-                                    dbHelper!
-                                        .update(
-                                          NotesModel(
-                                            id: snapshot.data![index].id,
-
-                                            title: titleController.text,
-                                            description: descController.text,
-                                          ),
-                                        )
-                                        .then((Value) {
-                                          setState(() {
-                                            notesList = dbHelper!
-                                                .getNotesList();
-                                          });
-                                          Navigator.pop(context);
-                                        });
-                                  },
-                                  child: const Text('Update'),
-                                ),
-                              ],
-                            ),
-                          );
-                        },
-                        child: Dismissible(
-                          key: Key(snapshot.data![index].id.toString()),
-                          background: Container(
-                            child: Icon(Icons.delete_sharp),
-                            color: Colors.red,
-                          ),
-                          direction: DismissDirection.endToStart,
-                          onDismissed: (direction) {
-                            setState(() {
-                              dbHelper!.delete(snapshot.data![index].id!);
-                              notesList = dbHelper!.getNotesList();
-                              snapshot.data!.removeAt(index);
-                            });
-                          },
-                          child: Card(
-                            child: ListTile(
-                              title: Text(
+                      return Padding(
+                        padding: const EdgeInsets.fromLTRB(8, 15, 8, 0),
+                        child: Card(
+                          elevation: 3,
+                          child: Column(
+                            children: [
+                              Text(
                                 snapshot.data![index].title.toString(),
+                                style: GoogleFonts.montserrat(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 16,
+                                ),
                               ),
-                              subtitle: Text(
+                              SizedBox(height: 5),
+                              Text(
                                 snapshot.data![index].description.toString(),
+                                style: GoogleFonts.openSans(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 13,
+                                ),
+
+                                maxLines: 3,
+                                overflow: TextOverflow.ellipsis,
                               ),
-                            ),
+                            ],
                           ),
                         ),
                       );
