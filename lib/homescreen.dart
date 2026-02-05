@@ -1,3 +1,4 @@
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -70,7 +71,7 @@ class _HomeScreenState extends State<HomeScreen> {
       body: Column(
         children: [
           FutureBuilder(
-            future: notesList,
+            future: dbHelper!.getNotesList(),
             builder: (context, AsyncSnapshot<List<NotesModel>> snapshot) {
               if (snapshot.connectionState == ConnectionState.waiting) {
                 return Center(child: CircularProgressIndicator());
@@ -89,29 +90,48 @@ class _HomeScreenState extends State<HomeScreen> {
                     itemBuilder: (context, index) {
                       return Padding(
                         padding: const EdgeInsets.fromLTRB(8, 15, 8, 0),
-                        child: Card(
-                          elevation: 3,
-                          child: Column(
-                            children: [
-                              Text(
-                                snapshot.data![index].title.toString(),
-                                style: GoogleFonts.montserrat(
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 16,
-                                ),
-                              ),
-                              SizedBox(height: 5),
-                              Text(
-                                snapshot.data![index].description.toString(),
-                                style: GoogleFonts.openSans(
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 13,
-                                ),
+                        child: Dismissible(
+                          direction: DismissDirection.horizontal,
+                          background: Container(
+                            color: Colors.red,
+                            alignment: Alignment.center,
+                            child: Icon(Icons.delete_outline),
+                          ),
+                          key: Key(snapshot.data![index].id.toString()),
+                          onDismissed: (direction) {
+                            dbHelper!.delete(snapshot.data![index].id!);
+                            setState(() {
+                              dbHelper!.getNotesList();
+                            });
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(content: Text('Note Deled')),
+                            );
+                          },
 
-                                maxLines: 3,
-                                overflow: TextOverflow.ellipsis,
-                              ),
-                            ],
+                          child: Card(
+                            elevation: 3,
+                            child: Column(
+                              children: [
+                                Text(
+                                  snapshot.data![index].title.toString(),
+                                  style: GoogleFonts.montserrat(
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 16,
+                                  ),
+                                ),
+                                SizedBox(height: 5),
+                                Text(
+                                  snapshot.data![index].description.toString(),
+                                  style: GoogleFonts.openSans(
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 13,
+                                  ),
+
+                                  maxLines: 3,
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                              ],
+                            ),
                           ),
                         ),
                       );
