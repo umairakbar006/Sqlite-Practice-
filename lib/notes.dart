@@ -3,7 +3,7 @@ class NotesModel {
   final String? title;
   final String? description;
   int? isFavourite;
-
+  // Constructor
   NotesModel({
     this.id,
     required this.title,

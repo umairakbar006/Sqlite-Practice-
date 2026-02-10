@@ -193,14 +193,59 @@ class _HomeScreenState extends State<HomeScreen> {
                                 padding: const EdgeInsets.all(12.0),
                                 child: Column(
                                   mainAxisSize: MainAxisSize.min,
+
                                   children: [
-                                    Text(
-                                      snapshot.data![index].title.toString(),
-                                      style: GoogleFonts.montserrat(
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 16,
-                                      ),
+                                    Row(
+                                      children: [
+                                        Text(
+                                          snapshot.data![index].title
+                                              .toString(),
+                                          style: GoogleFonts.montserrat(
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: 16,
+                                          ),
+                                          overflow: TextOverflow.ellipsis,
+                                        ),
+                                        IconButton(
+                                          onPressed: () {
+                                            int newVal =
+                                                snapshot
+                                                        .data![index]
+                                                        .isFavourite ==
+                                                    1
+                                                ? 0
+                                                : 1;
+                                            dbHelper!.update(
+                                              NotesModel(
+                                                title:
+                                                    snapshot.data![index].title,
+                                                description: snapshot
+                                                    .data![index]
+                                                    .description,
+                                                isFavourite: newVal,
+                                              ),
+                                            );
+                                            setState(() {
+                                              dbHelper!.getNotesList();
+                                            });
+                                          },
+                                          icon: Icon(
+                                            snapshot.data![index].isFavourite ==
+                                                    1
+                                                ? Icons.favorite
+                                                : Icons.favorite_border,
+                                            color:
+                                                snapshot
+                                                        .data![index]
+                                                        .isFavourite ==
+                                                    1
+                                                ? Colors.red
+                                                : Colors.grey,
+                                          ),
+                                        ),
+                                      ],
                                     ),
+
                                     Divider(thickness: 0.5),
                                     Expanded(
                                       child: Text(
