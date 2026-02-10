@@ -2,7 +2,7 @@ class NotesModel {
   final int? id;
   final String? title;
   final String? description;
-  int? isFavourite;
+  final int? isFavourite;
   // Constructor
   NotesModel({
     this.id,

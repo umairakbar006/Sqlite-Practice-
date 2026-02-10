@@ -64,4 +64,15 @@ class dBHelper {
       whereArgs: [notesModel.id],
     );
   }
+
+  //Favourite Notes
+  Future<List<NotesModel>> getFavNotes() async {
+    var dbclient = await db;
+    final List<Map<String, dynamic>> queryResult = await dbclient!.query(
+      'notes',
+      where: 'isFavourite=?',
+      whereArgs: [1],
+    );
+    return queryResult.map((e) => NotesModel.fromMap(e)).toList();
+  }
 }
